@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image" // Import Image component
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -266,9 +267,11 @@ export default function Dashboard() {
                   <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-xl bg-slate-800/50 backdrop-blur-sm hover:bg-slate-700/50">
                     <CardContent className="p-0">
                       <div className="relative overflow-hidden rounded-t-lg">
-                        <img
+                        <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.title}
+                          width={300} // A fixed width
+                          height={192} // A fixed height (48 * 4) for the 48 height on img
                           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         <Badge className={`absolute top-3 right-3 ${getStatusColor(item.status)}`}>
@@ -302,9 +305,11 @@ export default function Dashboard() {
                   <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-slate-800/50 backdrop-blur-sm hover:bg-slate-700/50">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.title}
+                          width={80} // Corresponds to w-20
+                          height={80} // Corresponds to h-20
                           className="w-16 h-16 object-cover rounded-lg"
                         />
                         <div className="flex-1 min-w-0">

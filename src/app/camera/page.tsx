@@ -8,6 +8,21 @@ import { Button } from "@/components/ui/button"
 import { ImageIcon, X } from "lucide-react"
 import { AnalyzingPopup } from "@/components/analyzing-popup"
 
+interface AnalysisData {
+  title: string
+  description: string
+  price: string
+  msrp: string
+  category: string
+  condition: string
+  brand: string
+  model: string
+  color: string
+  size: string
+  weight: string
+  dimensions: string
+}
+
 export default function CameraView() {
   const router = useRouter()
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -16,7 +31,7 @@ export default function CameraView() {
 
   const handleTakePhoto = () => {
     // Simulate taking a photo
-    const mockImageUrl = "/placeholder.svg?height=600&width=400&text=Captured+Photo"
+    const mockImageUrl = "https://placehold.co/400x600/2d3748/ffffff?text=Captured"
     setCapturedImage(mockImageUrl)
     setIsAnalyzing(true)
   }
@@ -38,7 +53,7 @@ export default function CameraView() {
     }
   }
 
-  const handleAnalysisComplete = (analysisData: any) => {
+  const handleAnalysisComplete = (analysisData: AnalysisData) => {
     // Set login flag
     localStorage.setItem("powerListerLoggedIn", "true")
 

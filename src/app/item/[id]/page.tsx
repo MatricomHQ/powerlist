@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import Image from "next/image" // Import Image component
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter, useParams } from "next/navigation"
@@ -347,10 +348,13 @@ export default function ItemDetails() {
         <Card className={`mb-6 ${theme.layout.card}`}>
           <CardContent className="p-0">
             <div className="relative">
-              <img
+              <Image
                 src={item.images?.[currentImageIndex] || item.image || "/placeholder.svg"}
                 alt={item.title}
+                width={800} // A reasonable default width
+                height={600} // A reasonable default height
                 className="w-full h-80 object-cover rounded-t-lg"
+                priority // Mark as priority since it's above the fold
               />
 
               {/* Status Badge */}
@@ -399,9 +403,11 @@ export default function ItemDetails() {
                       index === currentImageIndex ? "border-emerald-500" : theme.colors.border.primary
                     } ${draggedIndex === index ? "opacity-50 scale-95" : ""} hover:scale-105 relative group`}
                   >
-                    <img
+                    <Image
                       src={image || "/placeholder.svg"}
                       alt={`${item.title} view ${index + 1}`}
+                      width={64} // Fixed width for thumbnail
+                      height={64} // Fixed height for thumbnail
                       className="w-full h-full object-cover"
                     />
                     <GripVertical

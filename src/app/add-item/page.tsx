@@ -16,11 +16,26 @@ import { theme } from "@/lib/theme"
 
 type Step = "capture" | "analyzing" | "editing"
 
+interface AnalysisData {
+  title: string
+  description: string
+  price: string
+  msrp: string
+  category: string
+  condition: string
+  brand: string
+  model: string
+  color: string
+  size: string
+  weight: string
+  dimensions: string
+}
+
 export default function AddItem() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<Step>("capture")
   const [imageUrl, setImageUrl] = useState<string>("")
-  const [analysisData, setAnalysisData] = useState<any>(null)
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
 
   useEffect(() => {
     // Redirect to camera view since that's now the primary flow
@@ -40,7 +55,7 @@ export default function AddItem() {
     }
   }
 
-  const handleAnalysisComplete = (data: any) => {
+  const handleAnalysisComplete = (data: AnalysisData) => {
     setAnalysisData(data)
     setCurrentStep("editing")
   }
@@ -174,7 +189,7 @@ export default function AddItem() {
     return (
       <>
         <ItemEditor
-          initialData={analysisData}
+          initialData={analysisData || undefined} // Pass as undefined if null to match Partial<ItemForm>
           imageUrl={imageUrl}
           onSave={handleSaveItem}
           onBack={handleBack}

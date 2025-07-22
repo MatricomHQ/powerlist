@@ -16,7 +16,7 @@ export default function Login() {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleLogin = async (method = "email") => {
+  const handleLogin = async () => { // Removed 'method' parameter as it was unused
     setIsLoading(true)
     // Set login flag immediately
     localStorage.setItem("powerListerLoggedIn", "true")
@@ -96,7 +96,7 @@ export default function Login() {
             {socialLogins.map((social) => (
               <Button
                 key={social.name}
-                onClick={() => handleLogin(social.name.toLowerCase())}
+                onClick={() => handleLogin()} // Removed social.name.toLowerCase() as parameter
                 disabled={isLoading}
                 className={`w-full h-12 ${social.color} text-white border-0 shadow-xl ${social.shadow} ${theme.effects.transition} ${theme.effects.hover.scale} disabled:opacity-50 disabled:cursor-not-allowed`}
               >
@@ -177,7 +177,7 @@ export default function Login() {
               </label>
               <button
                 type="button"
-                onClick={() => handleLogin("forgot")}
+                onClick={() => handleLogin()} // Removed "forgot" as parameter
                 className={`${theme.colors.status.success.text} hover:text-emerald-300 ${theme.effects.transition}`}
               >
                 Forgot password?
@@ -205,7 +205,7 @@ export default function Login() {
             <p className={theme.colors.text.muted}>
               Don't have an account?{" "}
               <button
-                onClick={() => handleLogin("signup")}
+                onClick={() => handleLogin()} // Removed "signup" as parameter
                 className={`${theme.colors.status.success.text} hover:text-emerald-300 ${theme.effects.transition} font-medium`}
               >
                 Sign up for free
