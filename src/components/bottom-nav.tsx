@@ -59,13 +59,15 @@ export function BottomNav() {
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50">
         <Button
           onClick={() => handleNavigation("/camera")}
-          className={`h-16 w-16 rounded-full ${theme.colors.button.primary} ${theme.effects.shadow.large} border-4 ${theme.effects.transition} ${theme.effects.hover.scale} active:scale-95`}
-          style={{
-            borderColor: "rgb(30 41 59 / 0.8)", // Same as button bar background with backdrop-blur
-            boxShadow: "0 0 0 4px rgb(30 41 59 / 0.8), 0 25px 50px -12px rgba(16, 185, 129, 0.5)",
-          }}
+          // Corrected styling for the button, border, and animation
+          className={`h-16 w-16 rounded-full bg-gradient-to-br from-lime-400 to-emerald-500 
+            border-4 border-[rgb(30,41,59)] /* Dark border matching the nav bar */
+            shadow-2xl shadow-lime-400/50 /* Static lime glow */
+            relative add-button-pulse /* Class to apply the ::after pseudo-element animation */
+            ${theme.effects.transition} ${theme.effects.hover.scale} active:scale-95
+          `}
         >
-          <Plus className="h-8 w-8 text-white" />
+          <Plus className="h-10 w-10 text-white" /> {/* Increased icon size */}
         </Button>
       </div>
     </div>

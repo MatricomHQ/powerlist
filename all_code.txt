@@ -1,9 +1,6 @@
 --- Directory Structure ---
 .
-./app
-./app/add-item
-./app/add-item/edit
-./app/inventory
+./pl2
 ./public
 ./src
 ./src/app
@@ -19,20 +16,20 @@
 ./src/components/ui
 ./src/lib
 ./README.md
-./app/add-item/edit/loading.tsx
-./app/globals.css
-./app/inventory/loading.tsx
 ./components.json
 ./concat_rs.sh
 ./eslint.config.mjs
+./netlify.toml
 ./next-env.d.ts
 ./next.config.ts
 ./package-lock.json
 ./package.json
 ./postcss.config.mjs
+./powerlister-app.zip
 ./public/file.svg
 ./public/globe.svg
 ./public/next.svg
+./public/placeholder.svg
 ./public/vercel.svg
 ./public/window.svg
 ./src/app/add-item/page.tsx
@@ -73,149 +70,6 @@ DO NOT, UNDER ANY CIRCUMSTANCES, WRITE TO *ANY* FILES UNLESS THE USER EXPLICITLY
 
 
 
-// -------- BOF: ./app/add-item/edit/loading.tsx
-
-
-export default function Loading() {
-  return null
-}
-
-
-// -------- EOF: ./app/add-item/edit/loading.tsx
-
-  
-
-
-// -------- BOF: ./app/inventory/loading.tsx
-
-
-export default function Loading() {
-  return null
-}
-
-
-// -------- EOF: ./app/inventory/loading.tsx
-
-  
-
-
-// -------- BOF: ./app/globals.css
-
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-@layer base {
-  :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 142.1 76.2% 36.3%;
-    --radius: 0.75rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-/* Custom scrollbar for dark theme */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgb(30 41 59);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgb(71 85 105);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgb(100 116 139);
-}
-
-
-// -------- EOF: ./app/globals.css
-
-  
-
-
 // -------- BOF: ./postcss.config.mjs
 
 
@@ -254,9 +108,9 @@ import type { Config } from "tailwindcss"
 const config: Config = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/**/*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
@@ -361,7 +215,6 @@ const config: Config = {
 
 export default config
 
-
 // -------- EOF: ./tailwind.config.ts
 
   
@@ -386,7 +239,7 @@ export default config
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -414,11 +267,11 @@ export default config
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
     "tailwindcss": "^4.1.11",
+    "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5"
   }
 }
-
 
 // -------- EOF: ./package.json
 
@@ -548,6 +401,21 @@ import { Button } from "@/components/ui/button"
 import { ImageIcon, X } from "lucide-react"
 import { AnalyzingPopup } from "@/components/analyzing-popup"
 
+interface AnalysisData {
+  title: string
+  description: string
+  price: string
+  msrp: string
+  category: string
+  condition: string
+  brand: string
+  model: string
+  color: string
+  size: string
+  weight: string
+  dimensions: string
+}
+
 export default function CameraView() {
   const router = useRouter()
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -556,7 +424,7 @@ export default function CameraView() {
 
   const handleTakePhoto = () => {
     // Simulate taking a photo
-    const mockImageUrl = "/placeholder.svg?height=600&width=400&text=Captured+Photo"
+    const mockImageUrl = "/placeholder.svg"
     setCapturedImage(mockImageUrl)
     setIsAnalyzing(true)
   }
@@ -578,7 +446,7 @@ export default function CameraView() {
     }
   }
 
-  const handleAnalysisComplete = (analysisData: any) => {
+  const handleAnalysisComplete = (analysisData: AnalysisData) => {
     // Set login flag
     localStorage.setItem("powerListerLoggedIn", "true")
 
@@ -682,7 +550,6 @@ export default function CameraView() {
   )
 }
 
-
 // -------- EOF: ./src/app/camera/page.tsx
 
   
@@ -709,11 +576,26 @@ import { theme } from "@/lib/theme"
 
 type Step = "capture" | "analyzing" | "editing"
 
+interface AnalysisData {
+  title: string
+  description: string
+  price: string
+  msrp: string
+  category: string
+  condition: string
+  brand: string
+  model: string
+  color: string
+  size: string
+  weight: string
+  dimensions: string
+}
+
 export default function AddItem() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<Step>("capture")
   const [imageUrl, setImageUrl] = useState<string>("")
-  const [analysisData, setAnalysisData] = useState<any>(null)
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
 
   useEffect(() => {
     // Redirect to camera view since that's now the primary flow
@@ -733,7 +615,7 @@ export default function AddItem() {
     }
   }
 
-  const handleAnalysisComplete = (data: any) => {
+  const handleAnalysisComplete = (data: AnalysisData) => {
     setAnalysisData(data)
     setCurrentStep("editing")
   }
@@ -867,7 +749,7 @@ export default function AddItem() {
     return (
       <>
         <ItemEditor
-          initialData={analysisData}
+          initialData={analysisData || undefined} // Pass as undefined if null to match Partial<ItemForm>
           imageUrl={imageUrl}
           onSave={handleSaveItem}
           onBack={handleBack}
@@ -896,7 +778,6 @@ export default function AddItem() {
     </div>
   )
 }
-
 
 // -------- EOF: ./src/app/add-item/page.tsx
 
@@ -959,7 +840,7 @@ export default function Profile() {
     email: "alex.johnson@email.com",
     phone: "+1 (555) 123-4567",
     location: "San Francisco, CA",
-    avatar: "/placeholder.svg?height=100&width=100",
+    avatar: "/placeholder.svg",
     joinDate: "2023-06-15",
     totalSales: 0,
     totalListings: 0,
@@ -1039,7 +920,7 @@ export default function Profile() {
           <CardContent className="p-8">
             <div className="flex flex-col md:flex-row items-center gap-6">
               <Avatar className="w-24 h-24 ring-4 ring-emerald-500/20">
-                <AvatarImage src={profile.avatar || "/placeholder.svg"} alt={profile.name} />
+                <AvatarImage src={profile.avatar} alt={profile.name} />
                 <AvatarFallback className="text-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white">
                   {profile.name
                     .split(" ")
@@ -1355,7 +1236,6 @@ export default function Profile() {
   )
 }
 
-
 // -------- EOF: ./src/app/profile/page.tsx
 
   
@@ -1367,6 +1247,7 @@ export default function Profile() {
 "use client"
 
 import type React from "react"
+import Image from "next/image" // Import Image component
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter, useParams } from "next/navigation"
@@ -1448,14 +1329,14 @@ export default function ItemDetails() {
             "Powerful laptop with M2 chip delivering exceptional performance for creative professionals. Features stunning Retina display and all-day battery life."
         }
 
+        const itemImages = foundItem.images?.length
+          ? foundItem.images
+          : [foundItem.image, "/placeholder.svg", "/placeholder.svg"]
+
         setItem({
           ...foundItem,
           description: itemDescription,
-          images: foundItem.images || [
-            foundItem.image,
-            "/placeholder.svg?height=400&width=400",
-            "/placeholder.svg?height=400&width=400",
-          ],
+          images: itemImages,
           marketplaces: foundItem.status === "listed" ? ["ebay", "facebook"] : [],
           views: Math.floor(Math.random() * 100) + 20,
           likes: Math.floor(Math.random() * 20) + 5,
@@ -1677,7 +1558,7 @@ export default function ItemDetails() {
         onClick={() => handleFieldEdit(field, value)}
         className={`cursor-pointer hover:bg-slate-700/30 rounded px-2 py-1 -mx-2 -my-1 ${theme.effects.transition} group flex items-center gap-2 ${className}`}
       >
-        <span>{value}</span>
+        <span className={theme.colors.text.primary}>{value}</span>
         <Edit3
           className={`h-3 w-3 ${theme.colors.text.muted} opacity-0 group-hover:opacity-100 ${theme.effects.transition}`}
         />
@@ -1713,10 +1594,13 @@ export default function ItemDetails() {
         <Card className={`mb-6 ${theme.layout.card}`}>
           <CardContent className="p-0">
             <div className="relative">
-              <img
+              <Image
                 src={item.images?.[currentImageIndex] || item.image || "/placeholder.svg"}
                 alt={item.title}
+                width={800} // A reasonable default width
+                height={600} // A reasonable default height
                 className="w-full h-80 object-cover rounded-t-lg"
+                priority // Mark as priority since it's above the fold
               />
 
               {/* Status Badge */}
@@ -1765,9 +1649,11 @@ export default function ItemDetails() {
                       index === currentImageIndex ? "border-emerald-500" : theme.colors.border.primary
                     } ${draggedIndex === index ? "opacity-50 scale-95" : ""} hover:scale-105 relative group`}
                   >
-                    <img
+                    <Image
                       src={image || "/placeholder.svg"}
                       alt={`${item.title} view ${index + 1}`}
+                      width={64} // Fixed width for thumbnail
+                      height={64} // Fixed height for thumbnail
                       className="w-full h-full object-cover"
                     />
                     <GripVertical
@@ -1936,7 +1822,6 @@ export default function ItemDetails() {
   )
 }
 
-
 // -------- EOF: ./src/app/item/[id]/page.tsx
 
   
@@ -1949,6 +1834,7 @@ export default function ItemDetails() {
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image" // Import Image component
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -2164,9 +2050,11 @@ export default function Inventory() {
                   {/* Remove the hover opacity effects from action buttons since we're going mobile-first */}
                   <CardContent className="p-0">
                     <div className="relative overflow-hidden rounded-t-lg">
-                      <img
+                      <Image
                         src={item.image || "/placeholder.svg"}
                         alt={item.title}
+                        width={300} // A fixed width
+                        height={192} // A fixed height (48 * 4) for the 48 height on img
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <Badge className={`absolute top-3 right-3 ${getStatusColor(item.status)}`}>
@@ -2204,9 +2092,11 @@ export default function Inventory() {
                 <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-slate-800/50 backdrop-blur-sm hover:bg-slate-700/50">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
-                      <img
+                      <Image
                         src={item.image || "/placeholder.svg"}
                         alt={item.title}
+                        width={80} // Corresponds to w-20
+                        height={80} // Corresponds to h-20
                         className="w-20 h-20 object-cover rounded-lg"
                       />
                       <div className="flex-1 min-w-0">
@@ -2238,7 +2128,6 @@ export default function Inventory() {
     </div>
   )
 }
-
 
 // -------- EOF: ./src/app/inventory/page.tsx
 
@@ -2296,6 +2185,7 @@ export default function RootLayout({
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image" // Import Image component
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -2357,7 +2247,7 @@ export default function Dashboard() {
           size: '6.7"',
           weight: "240g",
           dimensions: "6.33 × 3.05 × 0.31 in",
-          image: "/placeholder.svg?height=300&width=300",
+          image: "/placeholder.svg",
           dateAdded: "2024-01-15",
           status: "listed",
         },
@@ -2376,7 +2266,7 @@ export default function Dashboard() {
           size: "10",
           weight: "1.2 lbs",
           dimensions: "12 × 8 × 5 in",
-          image: "/placeholder.svg?height=300&width=300",
+          image: "/placeholder.svg",
           dateAdded: "2024-01-14",
           status: "sold",
         },
@@ -2395,7 +2285,7 @@ export default function Dashboard() {
           size: '16"',
           weight: "4.7 lbs",
           dimensions: "14.01 × 9.77 × 0.66 in",
-          image: "/placeholder.svg?height=300&width=300",
+          image: "/placeholder.svg",
           dateAdded: "2024-01-13",
           status: "draft",
         },
@@ -2560,9 +2450,11 @@ export default function Dashboard() {
                   <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-xl bg-slate-800/50 backdrop-blur-sm hover:bg-slate-700/50">
                     <CardContent className="p-0">
                       <div className="relative overflow-hidden rounded-t-lg">
-                        <img
+                        <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.title}
+                          width={300} // A fixed width
+                          height={192} // A fixed height (48 * 4) for the 48 height on img
                           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         <Badge className={`absolute top-3 right-3 ${getStatusColor(item.status)}`}>
@@ -2596,9 +2488,11 @@ export default function Dashboard() {
                   <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-slate-800/50 backdrop-blur-sm hover:bg-slate-700/50">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.title}
+                          width={80} // Corresponds to w-20
+                          height={80} // Corresponds to h-20
                           className="w-16 h-16 object-cover rounded-lg"
                         />
                         <div className="flex-1 min-w-0">
@@ -2640,7 +2534,6 @@ export default function Dashboard() {
   )
 }
 
-
 // -------- EOF: ./src/app/page.tsx
 
   
@@ -2648,6 +2541,10 @@ export default function Dashboard() {
 
 // -------- BOF: ./src/app/globals.css
 
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -2694,73 +2591,85 @@ export default function Dashboard() {
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+body {
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+  }
+
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+  }
 }
 
 @layer base {
@@ -2772,6 +2681,23 @@ export default function Dashboard() {
   }
 }
 
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(30 41 59);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(71 85 105);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(100 116 139);
+}
 
 // -------- EOF: ./src/app/globals.css
 
@@ -2799,7 +2725,7 @@ export default function Login() {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleLogin = async (method = "email") => {
+  const handleLogin = async () => { // Removed 'method' parameter as it was unused
     setIsLoading(true)
     // Set login flag immediately
     localStorage.setItem("powerListerLoggedIn", "true")
@@ -2879,7 +2805,7 @@ export default function Login() {
             {socialLogins.map((social) => (
               <Button
                 key={social.name}
-                onClick={() => handleLogin(social.name.toLowerCase())}
+                onClick={() => handleLogin()} // Removed social.name.toLowerCase() as parameter
                 disabled={isLoading}
                 className={`w-full h-12 ${social.color} text-white border-0 shadow-xl ${social.shadow} ${theme.effects.transition} ${theme.effects.hover.scale} disabled:opacity-50 disabled:cursor-not-allowed`}
               >
@@ -2960,7 +2886,7 @@ export default function Login() {
               </label>
               <button
                 type="button"
-                onClick={() => handleLogin("forgot")}
+                onClick={() => handleLogin()} // Removed "forgot" as parameter
                 className={`${theme.colors.status.success.text} hover:text-emerald-300 ${theme.effects.transition}`}
               >
                 Forgot password?
@@ -2988,7 +2914,7 @@ export default function Login() {
             <p className={theme.colors.text.muted}>
               Don't have an account?{" "}
               <button
-                onClick={() => handleLogin("signup")}
+                onClick={() => handleLogin()} // Removed "signup" as parameter
                 className={`${theme.colors.status.success.text} hover:text-emerald-300 ${theme.effects.transition} font-medium`}
               >
                 Sign up for free
@@ -3016,7 +2942,6 @@ export default function Login() {
     </div>
   )
 }
-
 
 // -------- EOF: ./src/app/login/page.tsx
 
@@ -3703,7 +3628,7 @@ export function ItemEditor({ initialData, imageUrl, onSave, onBack, isAIEnhanced
               {/* Item Image */}
               <div className="md:w-1/3">
                 <img
-                  src={form.image || "/placeholder.svg?height=300&width=300"}
+                  src={form.image || "/placeholder.svg"}
                   alt={form.title || "Product"}
                   className="w-full h-64 object-cover rounded-lg"
                 />
@@ -4013,7 +3938,6 @@ export function ItemEditor({ initialData, imageUrl, onSave, onBack, isAIEnhanced
     </div>
   )
 }
-
 
 // -------- EOF: ./src/components/item-editor.tsx
 
