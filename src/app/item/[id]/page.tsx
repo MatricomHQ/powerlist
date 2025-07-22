@@ -25,6 +25,7 @@ import {
   Check,
   X,
   Edit3,
+  AlertTriangle,
 } from "lucide-react"
 import { Header } from "@/components/header"
 import { BottomNav } from "@/components/bottom-nav"
@@ -61,6 +62,7 @@ export default function ItemDetails() {
   const [editingField, setEditingField] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false) // State for delete confirmation
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -106,6 +108,16 @@ export default function ItemDetails() {
       const updatedItems = items.map((i: InventoryItem) => (i.id === updatedItem.id ? updatedItem : i))
       localStorage.setItem("powerListerItems", JSON.stringify(updatedItems))
       setItem(updatedItem)
+    }
+  }
+
+  const handleDeleteItem = () => {
+    const savedItems = localStorage.getItem("powerListerItems")
+    if (savedItems && item) {
+      const items = JSON.parse(savedItems)
+      const updatedItems = items.filter((i: InventoryItem) => i.id !== item.id)
+      localStorage.setItem("powerListerItems", JSON.stringify(updatedItems))
+      router.push("/inventory") // Redirect after deletion
     }
   }
 
@@ -564,6 +576,41 @@ export default function ItemDetails() {
                 </div>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Delete Item Section */}
+        <Card className="border-red-800/50 bg-slate-800/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-red-400">
+              <AlertTriangle className="h-5 w-5" />
+              Danger Zone
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between p-4 bg-red-900/20 rounded-lg border border-red-800/50">
+              <div>
+                <h3 className="font-medium text-white">Delete this item</h3>
+                <p className="text-sm text-red-300">This action cannot be undone.</p>
+              </div>
+              {!isDeleting ? (
+                <Button onClick={() => setIsDeleting(true)} className="bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25">
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Item
+                </Button>
+              ) : (
+                <div className="flex gap-3">
+                  <Button onClick={handleDeleteItem} className="bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25">
+                    <Check className="h-4 w-4 mr-2" />
+                    Confirm
+                  </Button>
+                  <Button onClick={() => setIsDeleting(false)} className={theme.colors.button.secondary}>
+                    <X className="h-4 w-4 mr-2" />
+                    Cancel
+                  </Button>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
