@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, Settings, ExternalLink } from "lucide-react"
-import { theme, marketplaces } from "@/lib/theme"
+import { theme } from "@/lib/theme"
+import { marketplaces } from "@/lib/marketplaces" // Import from new module
 
 interface MarketplaceSetupProps {
   onClose?: () => void

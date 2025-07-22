@@ -26,10 +26,12 @@ import {
   X,
   Edit3,
   AlertTriangle,
+  Send,
 } from "lucide-react"
 import { Header } from "@/components/header"
 import { BottomNav } from "@/components/bottom-nav"
-import { theme, marketplaces } from "@/lib/theme"
+import { theme } from "@/lib/theme"
+import { marketplaces as allMarketplaces, getMarketplaceById } from "@/lib/marketplaces"
 
 interface InventoryItem {
   id: string
@@ -62,7 +64,9 @@ export default function ItemDetails() {
   const [editingField, setEditingField] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false) // State for delete confirmation
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isListing, setIsListing] = useState<string | null>(null)
+  const [isUnlisting, setIsUnlisting] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -72,7 +76,6 @@ export default function ItemDetails() {
       const items = JSON.parse(savedItems)
       const foundItem = items.find((item: InventoryItem) => item.id === params.id)
       if (foundItem) {
-        // Add realistic descriptions based on item type
         let itemDescription = foundItem.description
         if (foundItem.title.toLowerCase().includes("iphone")) {
           itemDescription =
@@ -93,7 +96,7 @@ export default function ItemDetails() {
           ...foundItem,
           description: itemDescription,
           images: itemImages,
-          marketplaces: foundItem.status === "listed" ? ["ebay", "facebook"] : [],
+          marketplaces: foundItem.marketplaces || [],
           views: Math.floor(Math.random() * 100) + 20,
           likes: Math.floor(Math.random() * 20) + 5,
         })
@@ -117,7 +120,49 @@ export default function ItemDetails() {
       const items = JSON.parse(savedItems)
       const updatedItems = items.filter((i: InventoryItem) => i.id !== item.id)
       localStorage.setItem("powerListerItems", JSON.stringify(updatedItems))
-      router.push("/inventory") // Redirect after deletion
+      router.push("/inventory")
+    }
+  }
+
+  const handleListOnMarketplace = async (marketplaceId: string) => {
+    const marketplace = getMarketplaceById(marketplaceId)
+    if (!item || !marketplace || !marketplace.hasAPI) return
+
+    setIsListing(marketplaceId)
+    try {
+      const result = await marketplace.postItem(item)
+      if (result.success && item) {
+        const updatedItem = {
+          ...item,
+          status: "listed" as const,
+          marketplaces: [...(item.marketplaces || []), marketplaceId],
+        }
+        saveItem(updatedItem)
+      }
+    } finally {
+      setIsListing(null)
+    }
+  }
+
+  const handleUnlistOnMarketplace = async (marketplaceId: string) => {
+    const marketplace = getMarketplaceById(marketplaceId);
+    if (!item || !marketplace || !marketplace.hasAPI) return;
+
+    setIsUnlisting(marketplaceId);
+    try {
+      const result = await marketplace.unlistItem(item);
+      if (result.success && item) {
+        const updatedMarketplaces = item.marketplaces?.filter(id => id !== marketplaceId) || [];
+        const updatedItem = {
+          ...item,
+          marketplaces: updatedMarketplaces,
+          // If no marketplaces are left, set status back to draft
+          status: updatedMarketplaces.length === 0 ? "draft" : "listed" as const,
+        };
+        saveItem(updatedItem);
+      }
+    } finally {
+      setIsUnlisting(null);
     }
   }
 
@@ -243,16 +288,8 @@ export default function ItemDetails() {
   }
 
   const categories = [
-    "Electronics",
-    "Footwear",
-    "Clothing",
-    "Accessories",
-    "Home & Garden",
-    "Sports & Outdoors",
-    "Books",
-    "Toys & Games",
-    "Automotive",
-    "Other",
+    "Electronics", "Footwear", "Clothing", "Accessories", "Home & Garden",
+    "Sports & Outdoors", "Books", "Toys & Games", "Automotive", "Other",
   ]
   const conditions = ["New", "Like New", "Excellent", "Good", "Fair", "Poor"]
 
@@ -271,42 +308,23 @@ export default function ItemDetails() {
           <div className="mb-2">
             {type === "select" ? (
               <Select value={editValue} onValueChange={setEditValue}>
-                <SelectTrigger
-                  className={`${theme.colors.background.input} ${theme.colors.border.primary} ${theme.colors.text.primary} ${theme.colors.border.focus}`}
-                >
+                <SelectTrigger className={`${theme.colors.background.input} ${theme.colors.border.primary} ${theme.colors.text.primary} ${theme.colors.border.focus}`}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className={`${theme.colors.background.card} ${theme.colors.border.primary}`}>
                   {options.map((option) => (
-                    <SelectItem
-                      key={option}
-                      value={option}
-                      className={`${theme.colors.text.primary} hover:${theme.colors.background.cardHover}`}
-                    >
+                    <SelectItem key={option} value={option} className={`${theme.colors.text.primary} hover:${theme.colors.background.cardHover}`}>
                       {option}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             ) : type === "textarea" ? (
-              <Textarea
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                className={`${theme.colors.background.input} ${theme.colors.border.primary} ${theme.colors.text.primary} ${theme.colors.border.focus}`}
-                autoFocus
-              />
+              <Textarea value={editValue} onChange={(e) => setEditValue(e.target.value)} className={`${theme.colors.background.input} ${theme.colors.border.primary} ${theme.colors.text.primary} ${theme.colors.border.focus}`} autoFocus />
             ) : (
-              <Input
-                type={type}
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                className={`${theme.colors.background.input} ${theme.colors.border.primary} ${theme.colors.text.primary} ${theme.colors.border.focus}`}
-                autoFocus
-              />
+              <Input type={type} value={editValue} onChange={(e) => setEditValue(e.target.value)} className={`${theme.colors.background.input} ${theme.colors.border.primary} ${theme.colors.text.primary} ${theme.colors.border.focus}`} autoFocus />
             )}
           </div>
-
-          {/* Floating action buttons */}
           <div className="absolute top-full left-0 z-50 flex gap-2 mt-1 bg-slate-900/95 backdrop-blur-sm rounded-lg p-2 border border-slate-700 shadow-xl">
             <Button onClick={handleFieldSave} className={`p-2 ${theme.colors.status.success.bg}`}>
               <Check className="h-4 w-4" />
@@ -320,14 +338,9 @@ export default function ItemDetails() {
     }
 
     return (
-      <div
-        onClick={() => handleFieldEdit(field, value)}
-        className={`cursor-pointer hover:bg-slate-700/30 rounded px-2 py-1 -mx-2 -my-1 ${theme.effects.transition} group flex items-center gap-2 ${className}`}
-      >
+      <div onClick={() => handleFieldEdit(field, value)} className={`cursor-pointer hover:bg-slate-700/30 rounded px-2 py-1 -mx-2 -my-1 ${theme.effects.transition} group flex items-center gap-2 ${className}`}>
         <span className={theme.colors.text.primary}>{value}</span>
-        <Edit3
-          className={`h-3 w-3 ${theme.colors.text.muted} opacity-0 group-hover:opacity-100 ${theme.effects.transition}`}
-        />
+        <Edit3 className={`h-3 w-3 ${theme.colors.text.muted} opacity-0 group-hover:opacity-100 ${theme.effects.transition}`} />
       </div>
     )
   }
@@ -337,15 +350,10 @@ export default function ItemDetails() {
       <Header />
 
       <main className={theme.layout.container}>
-        {/* Header Actions */}
         <div className="flex items-center justify-between mb-6">
-          <Button
-            onClick={() => router.back()}
-            className={`${theme.colors.button.ghost} p-2 text-white hover:text-white`}
-          >
+          <Button onClick={() => router.back()} className={`${theme.colors.button.ghost} p-2 text-white hover:text-white`}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
-
           <div className="flex items-center gap-2">
             <Button className={`${theme.colors.button.ghost} p-2 text-white hover:text-white`}>
               <Heart className="h-5 w-5" />
@@ -356,83 +364,36 @@ export default function ItemDetails() {
           </div>
         </div>
 
-        {/* Image Gallery */}
+        {/* --- SECTION 1: Image Gallery --- */}
         <Card className={`mb-6 ${theme.layout.card}`}>
           <CardContent className="p-0">
             <div className="relative">
-              <Image
-                src={item.images?.[currentImageIndex] || item.image || "/placeholder.svg"}
-                alt={item.title}
-                width={800} // A reasonable default width
-                height={600} // A reasonable default height
-                className="w-full h-80 object-cover rounded-t-lg"
-                priority // Mark as priority since it's above the fold
-              />
-
-              {/* Status Badge */}
+              <Image src={item.images?.[currentImageIndex] || item.image || "/placeholder.svg"} alt={item.title} width={800} height={600} className="w-full h-80 object-cover rounded-t-lg" priority />
               <Badge className={`absolute top-4 right-4 ${getStatusColor(item.status)}`}>
                 {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
               </Badge>
-
-              {/* Delete Image Button */}
               {item.images && item.images.length > 1 && (
-                <Button
-                  onClick={handleImageDelete}
-                  className="absolute top-4 left-4 p-3 rounded-full bg-red-500/80 hover:bg-red-500 text-white border-0 shadow-lg"
-                >
+                <Button onClick={handleImageDelete} className="absolute top-4 left-4 p-3 rounded-full bg-red-500/80 hover:bg-red-500 text-white border-0 shadow-lg">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               )}
-
-              {/* Image Navigation */}
               {item.images && item.images.length > 1 && (
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                   {item.images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-3 h-3 rounded-full ${theme.effects.transition} ${
-                        index === currentImageIndex ? "bg-white" : "bg-white/50"
-                      }`}
-                    />
+                    <button key={index} onClick={() => setCurrentImageIndex(index)} className={`w-3 h-3 rounded-full ${theme.effects.transition} ${index === currentImageIndex ? "bg-white" : "bg-white/50"}`} />
                   ))}
                 </div>
               )}
             </div>
-
-            {/* Draggable Image Thumbnails */}
             {item.images && item.images.length > 0 && (
               <div className="p-4 flex gap-2 overflow-x-auto">
                 {item.images.map((image, index) => (
-                  <div
-                    key={index}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, index)}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, index)}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 cursor-move ${theme.effects.transition} ${
-                      index === currentImageIndex ? "border-emerald-500" : theme.colors.border.primary
-                    } ${draggedIndex === index ? "opacity-50 scale-95" : ""} hover:scale-105 relative group`}
-                  >
-                    <Image
-                      src={image || "/placeholder.svg"}
-                      alt={`${item.title} view ${index + 1}`}
-                      width={64} // Fixed width for thumbnail
-                      height={64} // Fixed height for thumbnail
-                      className="w-full h-full object-cover"
-                    />
-                    <GripVertical
-                      className={`absolute top-1 right-1 h-3 w-3 text-white/70 opacity-0 group-hover:opacity-100 ${theme.effects.transition} drop-shadow-lg`}
-                    />
+                  <div key={index} draggable onDragStart={(e) => handleDragStart(e, index)} onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, index)} onClick={() => setCurrentImageIndex(index)} className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 cursor-move ${theme.effects.transition} ${index === currentImageIndex ? "border-emerald-500" : theme.colors.border.primary} ${draggedIndex === index ? "opacity-50 scale-95" : ""} hover:scale-105 relative group`}>
+                    <Image src={image || "/placeholder.svg"} alt={`${item.title} view ${index + 1}`} width={64} height={64} className="w-full h-full object-cover" />
+                    <GripVertical className={`absolute top-1 right-1 h-3 w-3 text-white/70 opacity-0 group-hover:opacity-100 ${theme.effects.transition} drop-shadow-lg`} />
                   </div>
                 ))}
-
-                {/* Add Image Button */}
-                <button
-                  onClick={handleImageAdd}
-                  className={`flex-shrink-0 w-16 h-16 rounded-lg border-2 border-dashed ${theme.colors.border.primary} flex items-center justify-center ${theme.colors.text.muted} hover:${theme.colors.text.secondary} hover:border-emerald-500 ${theme.effects.transition} hover:scale-105`}
-                >
+                <button onClick={handleImageAdd} className={`flex-shrink-0 w-16 h-16 rounded-lg border-2 border-dashed ${theme.colors.border.primary} flex items-center justify-center ${theme.colors.text.muted} hover:${theme.colors.text.secondary} hover:border-emerald-500 ${theme.effects.transition} hover:scale-105`}>
                   <Plus className="h-6 w-6" />
                 </button>
               </div>
@@ -440,7 +401,7 @@ export default function ItemDetails() {
           </CardContent>
         </Card>
 
-        {/* Item Info */}
+        {/* --- SECTION 2: Item Info & Stats --- */}
         <Card className={`mb-6 ${theme.layout.card}`}>
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-4">
@@ -460,13 +421,9 @@ export default function ItemDetails() {
                 </div>
               </div>
             </div>
-
-            {/* Full-width description */}
             <div className="mb-4">
               <EditableField field="description" value={item.description} type="textarea" />
             </div>
-
-            {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className={`text-center p-3 rounded-lg ${theme.colors.background.overlay}`}>
                 <Eye className={`h-5 w-5 ${theme.colors.text.muted} mx-auto mb-1`} />
@@ -480,106 +437,102 @@ export default function ItemDetails() {
               </div>
               <div className={`text-center p-3 rounded-lg ${theme.colors.background.overlay}`}>
                 <Calendar className={`h-5 w-5 ${theme.colors.text.muted} mx-auto mb-1`} />
-                <div className={`text-sm font-medium ${theme.colors.text.primary}`}>
-                  {Math.floor((Date.now() - new Date(item.dateAdded).getTime()) / (1000 * 60 * 60 * 24))}
-                </div>
+                <div className={`text-sm font-medium ${theme.colors.text.primary}`}>{Math.floor((Date.now() - new Date(item.dateAdded).getTime()) / (1000 * 60 * 60 * 24))}</div>
                 <div className={`text-xs ${theme.colors.text.muted}`}>Days</div>
               </div>
             </div>
-
-            {/* Category Badge */}
             <div className="mb-4">
               <EditableField field="category" value={item.category} type="select" options={categories} />
             </div>
           </CardContent>
         </Card>
 
-        {/* Item Specifications */}
+        {/* --- SECTION 3: Marketplace Listings --- */}
+        <Card className={`mb-6 ${theme.layout.card}`}>
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-2 ${theme.colors.text.primary}`}>
+              <Package className={`h-5 w-5 ${theme.colors.status.info.text}`} />
+              Marketplace Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {allMarketplaces.filter(m => m.hasAPI).map((marketplace) => {
+                const isListedHere = item.marketplaces?.includes(marketplace.id);
+                const themeKey = marketplace.id as keyof typeof theme.colors.marketplace;
+                const marketplaceTheme = theme.colors.marketplace[themeKey] || theme.colors.marketplace.ebay;
+
+                return (
+                  <div key={marketplace.id} className={`flex items-center justify-between p-4 rounded-lg border ${theme.colors.border.primary} ${theme.colors.background.overlay}`}>
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{marketplace.icon}</span>
+                      <div>
+                        <h4 className={`font-medium ${theme.colors.text.primary}`}>{marketplace.name}</h4>
+                        {isListedHere ? (
+                          <p className={`text-sm ${theme.colors.status.success.text}`}>Active listing</p>
+                        ) : (
+                          <p className={`text-sm ${theme.colors.text.muted}`}>Not listed</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {isListedHere ? (
+                        <>
+                          <Button variant="ghost" className="p-2 text-slate-400 hover:text-white">
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                          <Button onClick={() => handleUnlistOnMarketplace(marketplace.id)} disabled={isUnlisting !== null} className="bg-red-600/20 text-red-400 hover:bg-red-600/40 hover:text-red-300 border border-red-800/50">
+                            {isUnlisting === marketplace.id ? "Removing..." : "Remove Listing"}
+                          </Button>
+                        </>
+                      ) : (
+                        <Button onClick={() => handleListOnMarketplace(marketplace.id)} disabled={isListing !== null} className={`${marketplaceTheme.bg} ${marketplaceTheme.hover} text-white ${marketplaceTheme.shadow}`}>
+                          {isListing === marketplace.id ? (
+                            "Listing..."
+                          ) : (
+                            <>
+                              <Send className="h-4 w-4 mr-2" />
+                              List Now
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* --- SECTION 4: Item Specifications --- */}
         <Card className={`mb-6 ${theme.layout.card}`}>
           <CardHeader>
             <CardTitle className={theme.colors.text.primary}>Specifications</CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Full-width description field */}
             <div className="mb-6">
               <div className={`p-3 rounded-lg ${theme.colors.background.overlay}`}>
                 <div className={`text-xs ${theme.colors.text.muted} mb-1`}>Description</div>
                 <div className={`font-medium ${theme.colors.text.primary}`}>
-                  <EditableField
-                    field="dimensions"
-                    value={item.dimensions || "No description provided"}
-                    type="textarea"
-                  />
+                  <EditableField field="dimensions" value={item.dimensions || "No description provided"} type="textarea" />
                 </div>
               </div>
             </div>
-
-            {/* Other specs in grid */}
             <div className="grid grid-cols-2 gap-4">
-              {[
-                { label: "Condition", field: "condition", value: item.condition, type: "select", options: conditions },
-                { label: "Brand", field: "brand", value: item.brand },
-                { label: "Model", field: "model", value: item.model },
-                { label: "Color", field: "color", value: item.color },
-                { label: "Size", field: "size", value: item.size },
-                { label: "Weight", field: "weight", value: item.weight },
-              ]
-                .filter((spec) => spec.value)
-                .map((spec, index) => (
-                  <div key={index} className={`p-3 rounded-lg ${theme.colors.background.overlay}`}>
-                    <div className={`text-xs ${theme.colors.text.muted} mb-1`}>{spec.label}</div>
-                    <div className={`font-medium ${theme.colors.text.primary}`}>
-                      <EditableField field={spec.field} value={spec.value} type={spec.type} options={spec.options} />
-                    </div>
+              {[{ label: "Condition", field: "condition", value: item.condition, type: "select", options: conditions }, { label: "Brand", field: "brand", value: item.brand }, { label: "Model", field: "model", value: item.model }, { label: "Color", field: "color", value: item.color }, { label: "Size", field: "size", value: item.size }, { label: "Weight", field: "weight", value: item.weight }].filter((spec) => spec.value).map((spec, index) => (
+                <div key={index} className={`p-3 rounded-lg ${theme.colors.background.overlay}`}>
+                  <div className={`text-xs ${theme.colors.text.muted} mb-1`}>{spec.label}</div>
+                  <div className={`font-medium ${theme.colors.text.primary}`}>
+                    <EditableField field={spec.field} value={spec.value} type={spec.type} options={spec.options} />
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Marketplace Status */}
-        <Card className={`mb-6 ${theme.layout.card}`}>
-          <CardHeader>
-            <CardTitle className={`flex items-center gap-2 ${theme.colors.text.primary}`}>
-              <Package className={`h-5 w-5 ${theme.colors.status.info.text}`} />
-              Marketplace Listings
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Currently Listed */}
-            {item.marketplaces && item.marketplaces.length > 0 && (
-              <div className="mb-6">
-                <h3 className={`font-medium ${theme.colors.text.primary} mb-3`}>Currently Listed On</h3>
-                <div className="space-y-3">
-                  {item.marketplaces.map((marketplaceId) => {
-                    const marketplace = marketplaces.find((m) => m.id === marketplaceId)
-                    if (!marketplace) return null
-
-                    return (
-                      <div
-                        key={marketplaceId}
-                        className={`flex items-center justify-between p-4 rounded-lg border ${theme.colors.border.primary} ${theme.colors.background.overlay}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{marketplace.icon}</span>
-                          <div>
-                            <h4 className={`font-medium ${theme.colors.text.primary}`}>{marketplace.name}</h4>
-                            <p className={`text-sm ${theme.colors.status.success.text}`}>Active listing</p>
-                          </div>
-                        </div>
-                        <Button className={`${theme.colors.button.ghost} p-2`}>
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Delete Item Section */}
+        {/* --- SECTION 5: Danger Zone --- */}
         <Card className="border-red-800/50 bg-slate-800/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-red-400">
@@ -614,7 +567,6 @@ export default function ItemDetails() {
           </CardContent>
         </Card>
 
-        {/* Hidden file input for adding images */}
         <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
       </main>
 

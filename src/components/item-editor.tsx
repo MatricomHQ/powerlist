@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Save, Eye, ArrowLeft } from "lucide-react"
-import { theme, marketplaces } from "@/lib/theme"
+import { Save, Eye, ArrowLeft, Send } from "lucide-react"
+import { theme } from "@/lib/theme"
+import { marketplaces, getMarketplaceById } from "@/lib/marketplaces" // Import from new module
 
 interface ItemForm {
   title: string
@@ -54,6 +55,7 @@ export function ItemEditor({ initialData, imageUrl, onSave, onBack, isAIEnhanced
   })
 
   const [connectedMarketplaces] = useState(["ebay", "facebook"]) // Mock connected marketplaces
+  const [isPosting, setIsPosting] = useState<string | null>(null) // State to track posting status
 
   const categories = [
     "Electronics",
@@ -70,9 +72,24 @@ export function ItemEditor({ initialData, imageUrl, onSave, onBack, isAIEnhanced
 
   const conditions = ["New", "Like New", "Excellent", "Good", "Fair", "Poor"]
 
-  const handlePostToMarketplace = (marketplaceId: string) => {
-    // Handle marketplace posting
-    console.log(`Posting to ${marketplaceId}`)
+  const handlePostToMarketplace = async (marketplaceId: string) => {
+    const marketplace = getMarketplaceById(marketplaceId)
+    if (!marketplace || !marketplace.hasAPI) return
+
+    setIsPosting(marketplaceId)
+    try {
+      const result = await marketplace.postItem(form)
+      if (result.success) {
+        console.log(`Successfully posted to ${marketplace.name} with listing ID: ${result.listingId}`)
+        // Here you might want to update the item's state to include the new listingId
+      } else {
+        console.error(`Failed to post to ${marketplace.name}:`, result.error)
+      }
+    } catch (error) {
+      console.error(`An error occurred while posting to ${marketplace.name}:`, error)
+    } finally {
+      setIsPosting(null)
+    }
   }
 
   return (
@@ -145,18 +162,25 @@ export function ItemEditor({ initialData, imageUrl, onSave, onBack, isAIEnhanced
                   <Button
                     key={marketplace.id}
                     onClick={() => handlePostToMarketplace(marketplace.id)}
-                    disabled={!isConnected || !form.title || !form.price}
-                    className={`h-auto p-4 flex flex-col items-center gap-2 ${
+                    disabled={!isConnected || !form.title || !form.price || isPosting !== null}
+                    className={`h-auto p-4 flex items-center gap-3 ${
                       isConnected
                         ? `${marketplaceTheme.bg} ${marketplaceTheme.hover} ${marketplaceTheme.shadow} text-white`
                         : theme.colors.button.secondary
                     } ${theme.effects.transition}`}
                   >
                     <span className="text-2xl">{marketplace.icon}</span>
-                    <div className="text-center">
+                    <div className="text-left">
                       <div className="font-medium">{marketplace.name}</div>
-                      <div className="text-xs opacity-80">{isConnected ? "Ready to post" : "Setup required"}</div>
+                      <div className="text-xs opacity-80">
+                        {isPosting === marketplace.id
+                          ? "Posting..."
+                          : isConnected
+                            ? "Ready to post"
+                            : "Setup required"}
+                      </div>
                     </div>
+                    {isPosting !== marketplace.id && isConnected && <Send className="h-4 w-4 ml-auto" />}
                   </Button>
                 )
               })}
