@@ -88,7 +88,7 @@ export default function Login() {
           {/* Welcome Text */}
           <div className="text-center mb-8">
             <h1 className={`text-3xl font-bold ${theme.colors.text.gradient} mb-2`}>Welcome Back</h1>
-            <p className={theme.colors.text.muted}>Sign in to continue to Power Lister</p>
+            <p className={theme.colors.text.muted}>Sign in to continue to Power List</p>
           </div>
 
           {/* Social Login Buttons */}

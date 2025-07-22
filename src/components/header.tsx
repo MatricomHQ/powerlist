@@ -14,7 +14,7 @@ export function Header() {
           </div>
           <div>
             <h1 className="text-lg font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-              Power Lister
+              Power List
             </h1>
           </div>
         </div>

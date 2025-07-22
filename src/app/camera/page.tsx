@@ -31,7 +31,7 @@ export default function CameraView() {
 
   const handleTakePhoto = () => {
     // Simulate taking a photo
-    const mockImageUrl = "https://placehold.co/400x600/2d3748/ffffff?text=Captured"
+    const mockImageUrl = "/placeholder.svg"
     setCapturedImage(mockImageUrl)
     setIsAnalyzing(true)
   }
