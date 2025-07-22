@@ -1,0 +1,15 @@
+# Netlify build configuration for a Next.js project
+
+[build]
+  # Command to build the Next.js application
+  command = "npm run build"
+  
+  # The directory that contains the deploy-ready assets.
+  # For Next.js, this is the .next directory.
+  publish = ".next"
+
+[[plugins]]
+  # This is the essential plugin for deploying Next.js sites on Netlify.
+  # It enables full support for features like SSR, ISR, Server Actions,
+  # middleware, and Image Optimization.
+  package = "@netlify/plugin-nextjs"
